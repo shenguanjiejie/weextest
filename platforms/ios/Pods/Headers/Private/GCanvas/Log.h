@@ -1,0 +1,1 @@
+../../../GCanvas/core/src/support/Log.h

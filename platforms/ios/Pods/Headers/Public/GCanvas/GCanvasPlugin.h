@@ -1,0 +1,1 @@
+../../../GCanvas/ios/BridgeModule/GCanvasPlugin.h
