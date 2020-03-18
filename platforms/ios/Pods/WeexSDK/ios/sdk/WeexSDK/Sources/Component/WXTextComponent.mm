@@ -246,17 +246,17 @@ do {\
 
 - (void)fillCSSStyles:(NSDictionary *)styles
 {
-    WX_STYLE_FILL_TEXT(fontFamily, fontFamily, NSString, YES) //!OCLint
-    WX_STYLE_FILL_TEXT_PIXEL(fontSize, fontSize, YES) //!OCLint
-    WX_STYLE_FILL_TEXT(fontWeight, fontWeight, WXTextWeight, YES) //!OCLint
-    WX_STYLE_FILL_TEXT(fontStyle, fontStyle, WXTextStyle, YES) //!OCLint
-    WX_STYLE_FILL_TEXT(lines, lines, NSUInteger, YES) //!OCLint
-    WX_STYLE_FILL_TEXT(textAlign, textAlign, NSTextAlignment, NO) //!OCLint
-    WX_STYLE_FILL_TEXT(textDecoration, textDecoration, WXTextDecoration, YES) //!OCLint
-    WX_STYLE_FILL_TEXT(textOverflow, textOverflow, NSString, NO) //!OCLint
-    WX_STYLE_FILL_TEXT_PIXEL(lineHeight, lineHeight, YES) //!OCLint
-    WX_STYLE_FILL_TEXT_PIXEL(letterSpacing, letterSpacing, YES) //!OCLint
-    WX_STYLE_FILL_TEXT(wordWrap, wordWrap, NSString, YES); //!OCLint
+    WX_STYLE_FILL_TEXT(fontFamily, fontFamily, NSString, YES)
+    WX_STYLE_FILL_TEXT_PIXEL(fontSize, fontSize, YES)
+    WX_STYLE_FILL_TEXT(fontWeight, fontWeight, WXTextWeight, YES)
+    WX_STYLE_FILL_TEXT(fontStyle, fontStyle, WXTextStyle, YES)
+    WX_STYLE_FILL_TEXT(lines, lines, NSUInteger, YES)
+    WX_STYLE_FILL_TEXT(textAlign, textAlign, NSTextAlignment, NO)
+    WX_STYLE_FILL_TEXT(textDecoration, textDecoration, WXTextDecoration, YES)
+    WX_STYLE_FILL_TEXT(textOverflow, textOverflow, NSString, NO)
+    WX_STYLE_FILL_TEXT_PIXEL(lineHeight, lineHeight, YES)
+    WX_STYLE_FILL_TEXT_PIXEL(letterSpacing, letterSpacing, YES)
+    WX_STYLE_FILL_TEXT(wordWrap, wordWrap, NSString, YES);
 
     UIColor* color = nil;
     id value = styles[@"color"];
@@ -499,15 +499,10 @@ do {\
     }
     
     // set font
-    UIFont *font = [WXUtility fontWithSize:_fontSize textWeight:_fontWeight textStyle:WXTextStyleNormal fontFamily:_fontFamily scaleFactor:self.weexInstance.pixelScaleFactor useCoreText:[self useCoreText]];
-    CTFontRef ctFont;
-    
-    if (_fontStyle == WXTextStyleItalic) {
-        CGAffineTransform matrix = CGAffineTransformMake(1, 0, tanf(16 * (CGFloat)M_PI / 180), 1, 0, 0);
-        ctFont = CTFontCreateWithFontDescriptor((__bridge CTFontDescriptorRef)font.fontDescriptor, font.pointSize, &matrix);
-    }else {
-        ctFont = CTFontCreateWithFontDescriptor((__bridge CTFontDescriptorRef)font.fontDescriptor, font.pointSize, NULL);
-    }
+    UIFont *font = [WXUtility fontWithSize:_fontSize textWeight:_fontWeight textStyle:_fontStyle fontFamily:_fontFamily scaleFactor:self.weexInstance.pixelScaleFactor useCoreText:[self useCoreText]];
+    CTFontRef ctFont = CTFontCreateWithName((__bridge CFStringRef)font.fontName,
+                                           font.pointSize,
+                                           NULL);
     
     _fontAscender = font.ascender;
     _fontDescender = font.descender;
@@ -572,6 +567,14 @@ do {\
         [attributedString addAttribute:NSKernAttributeName value:@(_letterSpacing) range:(NSRange){0, attributedString.length}];
     }
     
+    if ([self adjustLineHeight]) {
+        if (_lineHeight > font.lineHeight) {
+            [attributedString addAttribute:NSBaselineOffsetAttributeName
+                                     value:@((_lineHeight - font.lineHeight)/ 2)
+                                     range:(NSRange){0, attributedString.length}];
+        }
+    }
+    
     return attributedString;
 }
 
@@ -629,6 +632,13 @@ do {\
         [attributedString addAttribute:NSParagraphStyleAttributeName
                                  value:paragraphStyle
                                  range:(NSRange){0, attributedString.length}];
+    }
+    if ([self adjustLineHeight]) {
+        if (_lineHeight > font.lineHeight) {
+            [attributedString addAttribute:NSBaselineOffsetAttributeName
+                                     value:@((_lineHeight - font.lineHeight)/ 2)
+                                     range:(NSRange){0, attributedString.length}];
+        }
     }
 
     return attributedString;
@@ -785,11 +795,12 @@ do {\
         CTLineRef ctTruncatedLine = NULL;
         CTFrameGetLineOrigins(coreTextFrameRef, CFRangeMake(0, 0), lineOrigins);
         
+        CGFloat fixDescent = 0;
         if (lineCount > 0 && _lineHeight && WX_SYS_VERSION_LESS_THAN(@"10.0")) {
             CGFloat ascent, descent, leading;
             CTLineRef line1 = (CTLineRef)CFArrayGetValueAtIndex(ctLines, 0);
             CTLineGetTypographicBounds(line1, &ascent, &descent, &leading);
-            lineOrigins[0].y += (_lineHeight-(leading+ascent+descent))/2;
+            fixDescent = (descent + _fontDescender) + (ascent - _fontAscender);
         }
         
         for (CFIndex lineIndex = 0;(!_lines || _lines > lineIndex) && lineIndex < lineCount; lineIndex ++) {
@@ -800,12 +811,7 @@ do {\
             }
             CGPoint lineOrigin = lineOrigins[lineIndex];
             lineOrigin.x += padding.left;
-            if(_lineHeight && WX_SYS_VERSION_LESS_THAN(@"10.0")){
-                lineOrigin.y = lineOrigins[0].y - padding.top - _lineHeight * lineIndex ;
-            }else{
-                lineOrigin.y = lineOrigin.y - padding.top ;
-            }
-            
+            lineOrigin.y -= padding.top + fixDescent;
             CFArrayRef runs = CTLineGetGlyphRuns(lineRef);
             [mutableLines addObject:(__bridge id _Nonnull)(lineRef)];
             // lineIndex base 0
@@ -858,12 +864,12 @@ do {\
         run = (CTRunRef)CFArrayGetValueAtIndex(runs, runIndex);
         CFDictionaryRef attr = NULL;
         attr = CTRunGetAttributes(run);
-        //To properly draw the glyphs in a run, the fields tx and ty of the CGAffineTransform returned by CTRunGetTextMatrix should be set to the current text position.
-        CGAffineTransform transform = CTRunGetTextMatrix(run);
-        transform.tx = lineOrigin.x;
-        transform.ty = lineOrigin.y;
-        CGContextSetTextMatrix(context, transform);
-        
+        if (0 == runIndex) {
+            NSNumber *baselineOffset = (NSNumber*)CFDictionaryGetValue(attr, (__bridge void *)NSBaselineOffsetAttributeName);
+            if (baselineOffset) {
+                lineOrigin.y += [baselineOffset doubleValue];
+            }
+        }
         CGContextSetTextPosition(context, lineOrigin.x, lineOrigin.y);
         CTRunDraw(run, context, CFRangeMake(0, 0));
         CFIndex glyphCount = CTRunGetGlyphCount(run);
@@ -898,7 +904,7 @@ do {\
         CGFloat fontSize = font ? CTFontGetSize(font):32 * self.weexInstance.pixelScaleFactor;
         UIFont * uiFont = [UIFont systemFontOfSize:fontSize];
         if (uiFont) {
-            font = CTFontCreateWithFontDescriptor((__bridge CTFontDescriptorRef)uiFont.fontDescriptor, uiFont.pointSize, NULL);
+            font = CTFontCreateWithName((__bridge CFStringRef)uiFont.fontName, uiFont.pointSize, NULL);
         }
         if (font) {
             attrs[(id)kCTFontAttributeName] = (__bridge id)(font);

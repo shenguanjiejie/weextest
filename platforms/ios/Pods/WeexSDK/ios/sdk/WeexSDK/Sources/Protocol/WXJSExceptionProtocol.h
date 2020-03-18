@@ -17,9 +17,7 @@
  * under the License.
  */
 
-#import <WeexSDK/WXJSExceptionInfo.h>
-
-NS_ASSUME_NONNULL_BEGIN
+#import "WXJSExceptionInfo.h"
 
 typedef WXJSExceptionInfo WXRuntimeCheckException;
 
@@ -42,5 +40,3 @@ typedef WXJSExceptionInfo WXRuntimeCheckException;
 - (void)onRuntimeCheckException:(WXRuntimeCheckException*)exception;
 
 @end
-
-NS_ASSUME_NONNULL_END

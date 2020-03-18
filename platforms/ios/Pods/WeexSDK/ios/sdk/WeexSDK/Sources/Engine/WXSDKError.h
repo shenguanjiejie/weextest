@@ -18,9 +18,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WeexSDK/WXSDKInstance.h>
-
-NS_ASSUME_NONNULL_BEGIN
+#import "WXSDKInstance.h"
 
 #define WX_ERROR_GROUP_NATIVE   @"NATIVE"
 #define WX_ERROR_GROUP_JS       @"JS"
@@ -106,12 +104,8 @@ typedef NS_ENUM(int, WXSDKErrCode)
     WX_KEY_EXCEPTION_EMPTY_SCREEN_JS = -9700,
     WX_KEY_EXCEPTION_EMPTY_SCREEN_NATIVE = -9701,
     
+    WX_KEY_EXCEPTION_TOO_MANY_TIMERS = -9800,
     WX_KEY_EXCEPTION_NO_BUNDLE_TYPE = -9801,
-    WX_KEY_EXCEPTION_INVALID_JSON_OBJECT = -9802,
-    
-    WX_KEY_EXCEPTION_HERON_ERROR = -9900,
-    WX_KEY_EXCEPTION_HERON_RENDER_ERROR = -9901,
-    
 };
 
 typedef NS_ENUM (NSInteger,WXSDKErrorType)
@@ -139,4 +133,3 @@ typedef NS_ENUM (NSInteger,WXSDKErrorGroup){
 
 @end
 
-NS_ASSUME_NONNULL_END

@@ -134,6 +134,9 @@ WX_NUMBER_CONVERT(NSUInteger, unsignedIntegerValue)
             WXPerformBlockSyncOnMainThread(^{
                 safeAreaInsets = topInstance.rootView.safeAreaInsets;
             });
+            
+        } else {
+            // Fallback on earlier versions
         }
 #endif
         NSUInteger key = [directionArray indexOfObject:value];
@@ -549,31 +552,31 @@ WX_NUMBER_CONVERT(NSUInteger, unsignedIntegerValue)
 {
     NSString *string = [WXConvert NSString:value];
     if (!string)
-        return UIFontWeightRegular;
+        return WX_SYS_VERSION_LESS_THAN(@"8.2")?0:UIFontWeightRegular;
     else if ([string isEqualToString:@"normal"])
-        return UIFontWeightRegular;
+        return WX_SYS_VERSION_LESS_THAN(@"8.2")?0:UIFontWeightRegular;
     else if ([string isEqualToString:@"bold"])
-        return UIFontWeightBold;
+        return WX_SYS_VERSION_LESS_THAN(@"8.2")?0.4:UIFontWeightBold;
     else if ([string isEqualToString:@"100"])
-        return UIFontWeightUltraLight;
+        return WX_SYS_VERSION_LESS_THAN(@"8.2")?-0.8:UIFontWeightUltraLight;
     else if ([string isEqualToString:@"200"])
-        return UIFontWeightThin;
+        return WX_SYS_VERSION_LESS_THAN(@"8.2")?-0.6:UIFontWeightThin;
     else if ([string isEqualToString:@"300"])
-        return UIFontWeightLight;
+        return WX_SYS_VERSION_LESS_THAN(@"8.2")?-0.4:UIFontWeightLight;
     else if ([string isEqualToString:@"400"])
-        return UIFontWeightRegular;
+        return WX_SYS_VERSION_LESS_THAN(@"8.2")?0:UIFontWeightRegular;
     else if ([string isEqualToString:@"500"])
-        return UIFontWeightMedium;
+        return WX_SYS_VERSION_LESS_THAN(@"8.2")?0.23:UIFontWeightMedium;
     else if ([string isEqualToString:@"600"])
-        return UIFontWeightSemibold;
+        return WX_SYS_VERSION_LESS_THAN(@"8.2")?0.3:UIFontWeightSemibold;
     else if ([string isEqualToString:@"700"])
-        return UIFontWeightBold;
+        return WX_SYS_VERSION_LESS_THAN(@"8.2")?0.4:UIFontWeightBold;
     else if ([string isEqualToString:@"800"])
-        return UIFontWeightHeavy;
+        return WX_SYS_VERSION_LESS_THAN(@"8.2")?0.56:UIFontWeightHeavy;
     else if ([string isEqualToString:@"900"])
-        return UIFontWeightBlack;
+        return WX_SYS_VERSION_LESS_THAN(@"8.2")?0.62:UIFontWeightBlack;
         
-    return UIFontWeightRegular;
+    return WX_SYS_VERSION_LESS_THAN(@"8.2")?0:UIFontWeightRegular;
 }
 
 + (WXTextDecoration)WXTextDecoration:(id)value

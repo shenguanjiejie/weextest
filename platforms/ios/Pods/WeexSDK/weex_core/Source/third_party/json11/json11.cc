@@ -146,7 +146,7 @@ void Json::dump(string &out) const {
  */
 
 template <Json::Type tag, typename T>
-class Value : public JsonValue {//!OCLint
+class Value : public JsonValue {
 protected:
 
     // Constructors
@@ -430,7 +430,7 @@ struct JsonParser final {
           if (failed) return;
           consume_whitespace();
         }
-        while(comment_found); //!OCLint
+        while(comment_found);
       }
     }
 

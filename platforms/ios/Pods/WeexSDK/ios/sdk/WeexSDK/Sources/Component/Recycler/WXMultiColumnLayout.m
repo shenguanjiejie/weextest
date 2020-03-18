@@ -190,7 +190,10 @@ NSString * const kMultiColumnLayoutCell = @"WXMultiColumnLayoutCell";
             }
         } @catch (NSException *exception) {
             WXLog(@"%@", exception);
+        } @finally {
         }
+        
+        
         currentHeight = [self _maxHeightForAllColumns];
         [self _columnsReachToHeight:currentHeight];
     }

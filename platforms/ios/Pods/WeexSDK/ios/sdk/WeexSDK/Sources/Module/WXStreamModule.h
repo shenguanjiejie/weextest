@@ -18,15 +18,11 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WeexSDK/WXModuleProtocol.h>
-
-NS_ASSUME_NONNULL_BEGIN
+#import "WXModuleProtocol.h"
 
 @interface WXStreamModule : NSObject <WXModuleProtocol>
 
-- (void)fetch:(NSDictionary *)options callback:(WXModuleKeepAliveCallback)callback progressCallback:(nullable WXModuleKeepAliveCallback)progressCallback;
+- (void)fetch:(NSDictionary *)options callback:(WXModuleKeepAliveCallback)callback progressCallback:(WXModuleKeepAliveCallback)progressCallback;
 - (void)sendHttp:(NSDictionary*)param callback:(WXModuleKeepAliveCallback)callback DEPRECATED_MSG_ATTRIBUTE("Use fetch method instead.");
 
 @end
-
-NS_ASSUME_NONNULL_END

@@ -31,10 +31,8 @@
 #include "core/render/node/render_list.h"
 #include "core/render/node/render_object.h"
 #include "core/render/page/render_page.h"
-#include "core/json/JsonRenderManager.h"
 #include "core/bridge/eagle_bridge.h"
 #include "third_party/json11/json11.hpp"
-#include "core/moniter/render_performance.h"
 #ifdef OS_ANDROID
 #include <android/utils/params_utils.h>
 #include <wson/wson.h>
@@ -47,8 +45,16 @@ CoreSideInPlatform::~CoreSideInPlatform() {}
 void CoreSideInPlatform::SetDefaultHeightAndWidthIntoRootDom(
     const std::string &instance_id, float default_width, float default_height,
     bool is_width_wrap_content, bool is_height_wrap_content) {
-  RenderPageBase *page = RenderManager::GetInstance()->GetPage(instance_id);
+  RenderPage *page = RenderManager::GetInstance()->GetPage(instance_id);
   if (page == nullptr) return;
+
+#if RENDER_LOG
+  LOGD(
+      "[JNI] SetDefaultHeightAndWidthIntoRootDom >>>> pageId: %s, "
+      "defaultWidth: %f, defaultHeight: %f",
+      page->PageId().c_str(), defaultWidth, defaultHeight);
+#endif
+
   page->SetDefaultHeightAndWidthIntoRootRender(default_width, default_height,
                                                is_width_wrap_content,
                                                is_height_wrap_content);
@@ -61,41 +67,38 @@ void CoreSideInPlatform::OnInstanceClose(const std::string &instance_id) {
 void CoreSideInPlatform::SetStyleWidth(const std::string &instance_id,
                                        const std::string &render_ref,
                                        float width) {
-  RenderPageBase *page = RenderManager::GetInstance()->GetPage(instance_id);
+  RenderPage *page = RenderManager::GetInstance()->GetPage(instance_id);
   if (page == nullptr) return;
-  if (!page->is_platform_page()) return;
 
-  RenderObject *render = static_cast<RenderPage*>(page)->GetRenderObject(render_ref);
+  RenderObject *render = page->GetRenderObject(render_ref);
   if (render == nullptr) return;
 
   render->setStyleWidthLevel(CSS_STYLE);
   render->setStyleWidth(width, true);
-  static_cast<RenderPage*>(page)->set_is_dirty(true);
+  page->set_is_dirty(true);
 }
 
 void CoreSideInPlatform::SetStyleHeight(const std::string &instance_id,
                                         const std::string &render_ref,
                                         float height) {
-  RenderPageBase *page = RenderManager::GetInstance()->GetPage(instance_id);
+  RenderPage *page = RenderManager::GetInstance()->GetPage(instance_id);
   if (page == nullptr) return;
-  if (!page->is_platform_page()) return;
 
-  RenderObject *render = static_cast<RenderPage*>(page)->GetRenderObject(render_ref);
+  RenderObject *render = page->GetRenderObject(render_ref);
   if (render == nullptr) return;
 
   render->setStyleHeightLevel(CSS_STYLE);
   render->setStyleHeight(height);
-  static_cast<RenderPage*>(page)->set_is_dirty(true);
+  page->set_is_dirty(true);
 }
 
 void CoreSideInPlatform::SetMargin(const std::string &instance_id,
                                    const std::string &render_ref, int edge,
                                    float value) {
-  RenderPageBase *page = RenderManager::GetInstance()->GetPage(instance_id);
+  RenderPage *page = RenderManager::GetInstance()->GetPage(instance_id);
   if (page == nullptr) return;
-  if (!page->is_platform_page()) return;
 
-  RenderObject *render = static_cast<RenderPage*>(page)->GetRenderObject(render_ref);
+  RenderObject *render = page->GetRenderObject(render_ref);
   if (render == nullptr) return;
 
   if (edge == 0) {
@@ -109,17 +112,16 @@ void CoreSideInPlatform::SetMargin(const std::string &instance_id,
   } else if (edge == 4) {
     render->setMargin(kMarginALL, value);
   }
-  static_cast<RenderPage*>(page)->set_is_dirty(true);
+  page->set_is_dirty(true);
 }
 
 void CoreSideInPlatform::SetPadding(const std::string &instance_id,
                                     const std::string &render_ref, int edge,
                                     float value) {
-  RenderPageBase *page = RenderManager::GetInstance()->GetPage(instance_id);
+  RenderPage *page = RenderManager::GetInstance()->GetPage(instance_id);
   if (page == nullptr) return;
-  if (!page->is_platform_page()) return;
 
-  RenderObject *render = static_cast<RenderPage*>(page)->GetRenderObject(render_ref);
+  RenderObject *render = page->GetRenderObject(render_ref);
   if (render == nullptr) return;
 
   if (edge == 0) {
@@ -133,17 +135,16 @@ void CoreSideInPlatform::SetPadding(const std::string &instance_id,
   } else if (edge == 4) {
     render->setPadding(kPaddingALL, value);
   }
-  static_cast<RenderPage*>(page)->set_is_dirty(true);
+  page->set_is_dirty(true);
 }
 
 void CoreSideInPlatform::SetPosition(const std::string &instance_id,
                                      const std::string &render_ref, int edge,
                                      float value) {
-  RenderPageBase *page = RenderManager::GetInstance()->GetPage(instance_id);
+  RenderPage *page = RenderManager::GetInstance()->GetPage(instance_id);
   if (page == nullptr) return;
-  if (!page->is_platform_page()) return;
 
-  RenderObject *render = static_cast<RenderPage*>(page)->GetRenderObject(render_ref);
+  RenderObject *render = page->GetRenderObject(render_ref);
   if (render == nullptr) return;
 
   if (edge == 0) {
@@ -155,16 +156,15 @@ void CoreSideInPlatform::SetPosition(const std::string &instance_id,
   } else if (edge == 3) {
     render->setStylePosition(kPositionEdgeRight, value);
   }
-  static_cast<RenderPage*>(page)->set_is_dirty(true);
+  page->set_is_dirty(true);
 }
 
 void CoreSideInPlatform::MarkDirty(const std::string &instance_id,
                                    const std::string &render_ref) {
-  RenderPageBase *page = RenderManager::GetInstance()->GetPage(instance_id);
+  RenderPage *page = RenderManager::GetInstance()->GetPage(instance_id);
   if (page == nullptr) return;
-  if (!page->is_platform_page()) return;
 
-  RenderObject *render = static_cast<RenderPage*>(page)->GetRenderObject(render_ref);
+  RenderObject *render = page->GetRenderObject(render_ref);
   if (render == nullptr) return;
   render->markDirty();
 }
@@ -177,19 +177,9 @@ void CoreSideInPlatform::SetViewPortWidth(const std::string &instance_id,
 void CoreSideInPlatform::SetDeviceDisplayOfPage(const std::string &instance_id, float width, float height /* unused now */)  {
   RenderManager::GetInstance()->setDeviceWidth(instance_id, width);
 }
-
-void CoreSideInPlatform::SetPageRenderType(const std::string &pageId,
-                                           const std::string &renderType) {
-    RenderManager::GetInstance()->setPageArgument(pageId, "renderType", renderType);
-}
-
-void CoreSideInPlatform::RemovePageRenderType(const std::string &pageId) {
-  // void
-}
-
-
+    
 void CoreSideInPlatform::SetPageArgument(const std::string &pageId, const std::string& key, const std::string& value){
-     RenderManager::GetInstance()->setPageArgument(pageId, key, value);
+    RenderManager::GetInstance()->setPageArgument(pageId, key, value);
 }
 
 void CoreSideInPlatform::SetDeviceDisplay(const std::string &instance_id, float width, float height, float scale) {
@@ -204,33 +194,37 @@ void CoreSideInPlatform::SetDeviceDisplay(const std::string &instance_id, float 
 }
 
 void CoreSideInPlatform::SetPageDirty(const std::string &instance_id) {
-  RenderPageBase *page = RenderManager::GetInstance()->GetPage(std::string(instance_id));
-  if (page == nullptr) return;
-  if (!page->is_platform_page()) return;
-  static_cast<RenderPage*>(page)->set_is_dirty(true);
+  RenderPage *page =
+      RenderManager::GetInstance()->GetPage(std::string(instance_id));
+  if (page != nullptr) {
+    page->set_is_dirty(true);
+  }
 }
 
 void CoreSideInPlatform::ForceLayout(const std::string &instance_id) {
-  RenderPageBase *page = RenderManager::GetInstance()->GetPage(instance_id);
+  RenderPage *page = RenderManager::GetInstance()->GetPage(instance_id);
   if (page != nullptr) {
-    if (!page->is_platform_page()) return;
-    static_cast<RenderPage*>(page)->LayoutImmediately();
-    static_cast<RenderPage*>(page)->has_fore_layout_action_.store(false);
+#if RENDER_LOG
+    LOGD("[JNI] ForceLayout >>>> pageId: %s, needForceLayout: %s",
+         jString2StrFast(env, instanceId).c_str(),
+         page->hasForeLayoutAction.load() ? "true" : "false");
+#endif
+
+    page->LayoutImmediately();
+    page->has_fore_layout_action_.store(false);
   }
 }
 
 bool CoreSideInPlatform::NotifyLayout(const std::string &instance_id) {
-  RenderPageBase *page = RenderManager::GetInstance()->GetPage(instance_id);
+  RenderPage *page = RenderManager::GetInstance()->GetPage(instance_id);
   if (page != nullptr) {
-    if (!page->is_platform_page()) return false;
-      
-    if (!static_cast<RenderPage*>(page)->need_layout_.load()) {
-      static_cast<RenderPage*>(page)->need_layout_.store(true);
+    if (!page->need_layout_.load()) {
+      page->need_layout_.store(true);
     }
 
-    bool ret = !static_cast<RenderPage*>(page)->has_fore_layout_action_.load() && static_cast<RenderPage*>(page)->is_dirty();
+    bool ret = !page->has_fore_layout_action_.load() && page->is_dirty();
     if (ret) {
-      static_cast<RenderPage*>(page)->has_fore_layout_action_.store(true);
+      page->has_fore_layout_action_.store(true);
     }
     return ret ? true : false;
   }
@@ -243,7 +237,7 @@ bool CoreSideInPlatform::RelayoutUsingRawCssStyles(const std::string& instance_i
 
 std::vector<int64_t> CoreSideInPlatform::GetFirstScreenRenderTime(
     const std::string &instance_id) {
-  RenderPageBase *page = RenderManager::GetInstance()->GetPage(instance_id);
+  RenderPage *page = RenderManager::GetInstance()->GetPage(instance_id);
   if (page == nullptr) {
     return std::vector<int64_t>();
   } else {
@@ -253,7 +247,7 @@ std::vector<int64_t> CoreSideInPlatform::GetFirstScreenRenderTime(
 
 std::vector<int64_t> CoreSideInPlatform::GetRenderFinishTime(
     const std::string &instance_id) {
-  RenderPageBase *page = RenderManager::GetInstance()->GetPage(instance_id);
+  RenderPage *page = RenderManager::GetInstance()->GetPage(instance_id);
   if (page == nullptr) {
     return std::vector<int64_t>();
   } else {
@@ -263,11 +257,10 @@ std::vector<int64_t> CoreSideInPlatform::GetRenderFinishTime(
 
 void CoreSideInPlatform::SetRenderContainerWrapContent(
     const std::string &instance_id, bool wrap) {
-  RenderPageBase *page = RenderManager::GetInstance()->GetPage(instance_id);
+  RenderPage *page = RenderManager::GetInstance()->GetPage(instance_id);
   if (page == nullptr) return;
-  if (!page->is_platform_page()) return;
 
-  static_cast<RenderPage*>(page)->set_is_render_container_width_wrap_content(wrap);
+  page->set_is_render_container_width_wrap_content(wrap);
 }
 
 void CoreSideInPlatform::BindMeasurementToRenderObject(long ptr) {
@@ -284,13 +277,17 @@ void CoreSideInPlatform::RegisterCoreEnv(const std::string &key,
 
 long CoreSideInPlatform::GetRenderObject(const std::string &instance_id,
                                          const std::string &render_ref) {
-  RenderPageBase *page = RenderManager::GetInstance()->GetPage(instance_id);
+  RenderPage *page = RenderManager::GetInstance()->GetPage(instance_id);
   if (page == nullptr) {
     return 0;
   }
-  return convert_render_object_to_long(page->GetRenderObject(render_ref));
-}
 
+  RenderObject *render = page->GetRenderObject(render_ref);
+  if (render == nullptr) {
+    return 0;
+  }
+  return convert_render_object_to_long(render);
+}
 void CoreSideInPlatform::UpdateRenderObjectStyle(long render_ptr,
                                                  const std::string &key,
                                                  const std::string &value) {
@@ -388,9 +385,10 @@ int CoreSideInPlatform::RefreshInstance(
              }}
         }
     };
-    std::string out = final_json.dump();
-    auto utf16_key = weex::base::to_utf16(const_cast<char*>(out.c_str()),
-                                          out.length());
+
+    auto final_json_str = final_json.dump().c_str();
+    auto utf16_key = weex::base::to_utf16(const_cast<char*>(final_json_str),
+                                          strlen(final_json_str));
     args->value.string = genWeexString(
         reinterpret_cast<const uint16_t*>(utf16_key.c_str()), utf16_key.size());
     msg.push_back(args);
@@ -500,7 +498,6 @@ int CoreSideInPlatform::CreateInstance(const char *instanceId, const char *func,
                                        const char *initData,
                                        const char *extendsApi, std::vector<INIT_FRAMEWORK_PARAMS*>& params,
                                        const char *render_strategy) {
-
   // First check about DATA_RENDER mode
   if (render_strategy != nullptr) {
     std::function<void(const char *, const char *)> exec_js =
@@ -575,13 +572,7 @@ int CoreSideInPlatform::CreateInstance(const char *instanceId, const char *func,
       }
       return true;
     }
-
-    if(strcmp(render_strategy, "JSON_RENDER") == 0){
-       JsonRenderManager::GetInstance()->CreatePage(script, instanceId, render_strategy);
-       return true;
-    }
   }
-
 
   return WeexCoreManager::Instance()
       ->script_bridge()
@@ -599,17 +590,10 @@ std::unique_ptr<WeexJSResult> CoreSideInPlatform::ExecJSOnInstance(const char *i
 
 int CoreSideInPlatform::DestroyInstance(const char *instanceId) {
     auto handler = EagleBridge::GetInstance()->data_render_handler();
-    if (handler != nullptr) {
+    if(handler!=nullptr){
       handler->DestroyInstance(instanceId);
     }
-    if (JsonRenderManager::GetInstance()->ClosePage(instanceId)) {
-      return true;
-    }
-    auto script_side = WeexCoreManager::Instance()->script_bridge()->script_side();
-    if (script_side) {
-        return script_side->DestroyInstance(instanceId);
-    }
-    return true;
+    return WeexCoreManager::Instance()->script_bridge()->script_side()->DestroyInstance(instanceId);
 }
 
 int CoreSideInPlatform::UpdateGlobalConfig(const char *config) {
@@ -626,20 +610,6 @@ int CoreSideInPlatform::UpdateInitFrameworkParams(const std::string &key, const 
           ->script_bridge()
           ->script_side()
           ->UpdateInitFrameworkParams(key, value, desc);
-}
-
-void CoreSideInPlatform::SetLogType(const int logType, const bool isPerf) {
-  WeexCoreManager::Instance()
-      ->script_bridge()
-      ->script_side()
-      ->SetLogType(logType,isPerf);
-}
-
-double CoreSideInPlatform::GetLayoutTime(const char* instanceId) const {
-    RenderPageBase *page = RenderManager::GetInstance()->GetPage(instanceId);
-    if (page == nullptr) return 0;
-    if (!page->is_platform_page()) return 0;
-    return page->getPerformance()->cssLayoutTime;
 }
 
 

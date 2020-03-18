@@ -18,7 +18,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WeexSDK/WXType.h>
+#import "WXType.h"
 
 @class WXSDKInstance;
 
@@ -182,7 +182,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return A block that takes component, callbackType and a result.
  **/
-@property (nonatomic, copy) void (^componentCallback)(WXComponent *component, WXComponentCallbackType callbackType, id _Nullable result);
+@property (nonatomic, copy) void (^componentCallback)(WXComponent *component, WXComponentCallbackType callbackType, id result);
 
 /**
  * @abstract Called on main thread when the component has just laid out.
@@ -437,15 +437,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)updateBindingData:(NSDictionary *)data;
 
-///--------------------------------------
-/// @name Heron
-///--------------------------------------
-
-/**
- * @abstract Unload native view of embeded component in Heron mode.
- */
-- (void)unloadNativeView;
-
 @end
 
 @interface WXComponent (Deprecated)
@@ -486,4 +477,3 @@ typedef void(^WXDisplayCompletionBlock)(CALayer *layer, BOOL finished);
 @end
 
 NS_ASSUME_NONNULL_END
-

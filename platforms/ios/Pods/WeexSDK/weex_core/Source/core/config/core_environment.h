@@ -18,13 +18,13 @@
  */
 #ifndef WEEX_PROJECT_WXCOREENVIRONMENT_H
 #define WEEX_PROJECT_WXCOREENVIRONMENT_H
-#include "core/api/wx_api.h"
+
 #include <string>
 #include <map>
 
 namespace WeexCore {
 
-  class WX_EXPORT WXCoreEnvironment {
+  class WXCoreEnvironment {
 
   private:
 
@@ -92,7 +92,9 @@ namespace WeexCore {
 
     const std::string GetOption(const std::string &key);
 
-    const std::map<std::string, std::string> &options();
+    inline const std::map<std::string, std::string> &options() {
+        return mOptions;
+    };
 
     bool isUseRunTimeApi();
 

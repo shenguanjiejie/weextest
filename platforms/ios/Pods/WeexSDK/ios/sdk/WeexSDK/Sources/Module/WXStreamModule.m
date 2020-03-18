@@ -290,6 +290,7 @@ WX_EXPORT_METHOD(@selector(fetchWithArrayBuffer:options:callback:progressCallbac
             return @"ERR_INVALID_REQUEST";
         case 100:
             return @"Continue";
+            break;
         case 101:
             return @"Switching Protocol";
         case 102:

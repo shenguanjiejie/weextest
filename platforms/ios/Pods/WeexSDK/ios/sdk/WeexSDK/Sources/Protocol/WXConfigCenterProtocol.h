@@ -17,10 +17,6 @@
  * under the License.
  */
 
-#import <Foundation/Foundation.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
 @protocol WXConfigCenterProtocol <NSObject>
 
 /**
@@ -30,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param isDefault whether the value is default value
  @return the value for config key
  */
-- (id)configForKey:(NSString*)key defaultValue:(id _Nullable)defaultValue isDefault:(BOOL* _Nullable)isDefault;
+- (id)configForKey:(NSString*)key defaultValue:(id)defaultValue isDefault:(BOOL*)isDefault;
 
 @optional
 /**
@@ -41,5 +37,3 @@ NS_ASSUME_NONNULL_BEGIN
 - (id)configForGroup:(NSString*)group;
 
 @end
-
-NS_ASSUME_NONNULL_END

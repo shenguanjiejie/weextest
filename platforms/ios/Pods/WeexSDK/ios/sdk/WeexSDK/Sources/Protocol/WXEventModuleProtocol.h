@@ -17,14 +17,10 @@
  * under the License.
  */
 
-#import <WeexSDK/WXModuleProtocol.h>
-
-NS_ASSUME_NONNULL_BEGIN
+#import "WXModuleProtocol.h"
 
 @protocol WXEventModuleProtocol<WXModuleProtocol>
 
 - (void)openURL:(NSString *)url;
 
 @end
-
-NS_ASSUME_NONNULL_END

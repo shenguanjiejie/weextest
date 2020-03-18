@@ -17,9 +17,9 @@
  * under the License.
  */
 
-#import <WeexSDK/WXComponent.h>
-#import <WeexSDK/WXSDKInstance.h>
-#import <WeexSDK/WXUtility.h>
+#import "WXComponent.h"
+#import "WXSDKInstance.h"
+#import "WXUtility.h"
 
 #define FlexUndefined NAN
 

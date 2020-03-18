@@ -18,9 +18,8 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WeexSDK/WXBridgeMethod.h>
 
-NS_ASSUME_NONNULL_BEGIN
+#import "WXBridgeMethod.h"
 
 @interface WXInvocationConfig : NSObject
 
@@ -36,5 +35,3 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)registerMethods;
 
 @end
-
-NS_ASSUME_NONNULL_END

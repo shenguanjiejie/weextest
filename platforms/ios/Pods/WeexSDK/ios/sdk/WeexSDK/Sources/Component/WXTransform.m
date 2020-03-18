@@ -177,7 +177,7 @@
     CATransform3D nativeTansform3D = CATransform3DIdentity;
     
     // CGFLOAT_MAX is not INF on 32-bit device
-    if(_perspective && _perspective != CGFLOAT_MAX && !isinf(_perspective)) { //!OCLint
+    if(_perspective && _perspective != CGFLOAT_MAX && !isinf(_perspective)) {
         nativeTansform3D.m34 = -1.0/_perspective;
     }
     if (!view || view.bounds.size.width <= 0 || view.bounds.size.height <= 0) {
@@ -369,7 +369,7 @@
     if ([value[0] hasSuffix:@"%"]) {
         translateX = [WXLength lengthWithFloat:x type:WXLengthTypePercent];
     } else {
-        x = [WXConvert WXPixelType:value[0] scaleFactor:self.weexInstance.pixelScaleFactor];
+        x = WXPixelScale(x, self.weexInstance.pixelScaleFactor);
         translateX = [WXLength lengthWithFloat:x type:WXLengthTypeFixed];
     }
     _translateX = translateX;
@@ -382,7 +382,7 @@
     if ([value[0] hasSuffix:@"%"]) {
         translateY = [WXLength lengthWithFloat:y type:WXLengthTypePercent];
     } else {
-        y = [WXConvert WXPixelType:value[0] scaleFactor:self.weexInstance.pixelScaleFactor];
+        y = WXPixelScale(y, self.weexInstance.pixelScaleFactor);
         translateY = [WXLength lengthWithFloat:y type:WXLengthTypeFixed];
     }
     _translateY = translateY;

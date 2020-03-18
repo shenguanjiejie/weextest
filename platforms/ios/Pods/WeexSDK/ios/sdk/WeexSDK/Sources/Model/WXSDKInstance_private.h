@@ -19,6 +19,7 @@
 
 #import <Foundation/Foundation.h>
 #import "WXSDKInstance.h"
+#import "WXComponentManager.h"
 #import "WXModuleMethod.h"
 #import "WXThreadSafeMutableDictionary.h"
 #import <JavaScriptCore/JavaScriptCore.h>
@@ -38,6 +39,8 @@
 @property (nonatomic, strong) NSString *callCreateInstanceContext;
 @property (nonatomic, strong) NSString *createInstanceContextResult;
 @property (nonatomic, strong) NSString *executeRaxApiResult;
+
+@property (nonatomic, readonly, strong) WXComponentManager *componentManager;
 
 - (void)addModuleEventObservers:(NSString*)event callback:(NSString*)callbackId option:(NSDictionary*)option moduleClassName:(NSString*)moduleClassName;
 - (void)_addModuleEventObserversWithModuleMethod:(WXModuleMethod*)method;

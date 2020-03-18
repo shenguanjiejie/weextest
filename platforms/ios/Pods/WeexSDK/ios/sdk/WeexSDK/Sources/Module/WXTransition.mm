@@ -170,9 +170,8 @@
     }
     [targetComponent _updateCSSNodeStyles:styles];
     [targetComponent _resetCSSNodeStyles:resetStyles];
-    NSDictionary* dupStyles = [NSDictionary dictionaryWithDictionary:styles];
     WXPerformBlockOnMainThread(^{
-        [targetComponent _updateViewStyles:dupStyles];
+        [targetComponent _updateViewStyles:styles];
     });
 }
 

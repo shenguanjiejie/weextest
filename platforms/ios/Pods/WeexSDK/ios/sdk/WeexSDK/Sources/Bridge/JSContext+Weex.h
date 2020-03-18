@@ -19,12 +19,8 @@
 
 #import <JavaScriptCore/JavaScriptCore.h>
 
-NS_ASSUME_NONNULL_BEGIN
-
 @interface JSContext (Weex)
 
-@property (nonatomic, strong) NSString * _Nullable instanceId;
+@property (nonatomic, strong) NSString *instanceId;
 
 @end
-
-NS_ASSUME_NONNULL_END

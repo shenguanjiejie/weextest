@@ -19,8 +19,6 @@
 
 #import <UIKit/UIKit.h>
 
-NS_ASSUME_NONNULL_BEGIN
-
 /**
  * The WXBaseViewController class provides the infrastructure for managing the weex view in your app. It is 
  * responsible for creating a weex instance or rendering the weex view, for observing the lifecycle of the
@@ -46,5 +44,3 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)refreshWeex;
 
 @end
-
-NS_ASSUME_NONNULL_END

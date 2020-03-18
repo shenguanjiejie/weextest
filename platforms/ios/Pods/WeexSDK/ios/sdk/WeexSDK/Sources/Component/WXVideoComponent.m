@@ -25,6 +25,8 @@
 
 #import <AVFoundation/AVPlayer.h>
 #import <AVKit/AVPlayerViewController.h>
+#import <MediaPlayer/MPMoviePlayerViewController.h>
+#import <MediaPlayer/MPMoviePlayerController.h>
 #import <AVFoundation/AVPlayerItem.h>
 
 @interface WXPlayer : NSObject
@@ -51,7 +53,40 @@
 - (id)init
 {
     if (self = [super init]) {
-        _playerViewController = [AVPlayerViewController new];
+        if ([self greater8SysVer]) {
+            _playerViewController = [AVPlayerViewController new];
+            
+        } else {
+            _playerViewController = [[MPMoviePlayerViewController alloc] initWithContentURL:nil];
+            MPMoviePlayerViewController *MPVC = (MPMoviePlayerViewController*)_playerViewController;
+            MPVC.moviePlayer.controlStyle = MPMovieControlStyleEmbedded;
+            MPVC.moviePlayer.shouldAutoplay = NO;
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(playFinish)
+                                                         name:MPMoviePlayerPlaybackDidFinishNotification
+                                                       object:MPVC.moviePlayer];
+            [[NSNotificationCenter defaultCenter] addObserverForName:MPMoviePlayerPlaybackStateDidChangeNotification object:MPVC.moviePlayer queue:nil usingBlock:^(NSNotification *notification)
+             {
+                 if (MPVC.moviePlayer.playbackState == MPMoviePlaybackStatePlaying) {
+                     if (_playbackStateChanged)
+                         _playbackStateChanged(WXPlaybackStatePlaying);
+                 }
+                 if (MPVC.moviePlayer.playbackState == MPMoviePlaybackStateStopped) {
+                     //stopped
+                 } if (MPVC.moviePlayer.playbackState == MPMoviePlaybackStatePaused) {
+                     //paused
+                     if (_playbackStateChanged) {
+                         _playbackStateChanged(WXPlaybackStatePaused);
+                     }
+                 } if (MPVC.moviePlayer.playbackState == MPMoviePlaybackStateInterrupted) {
+                     //interrupted
+                 } if (MPVC.moviePlayer.playbackState == MPMoviePlaybackStateSeekingForward) {
+                     //seeking forward
+                 } if (MPVC.moviePlayer.playbackState == MPMoviePlaybackStateSeekingBackward) {
+                     //seeking backward
+                 }
+             }];
+        }
         
         [self addSubview:_playerViewController.view];
     }
@@ -61,11 +96,26 @@
 - (void)dealloc
 {
     _weexSDKInstance = nil;
-    AVPlayerViewController *AVVC = (AVPlayerViewController*)_playerViewController;
-    [AVVC.player removeObserver:self forKeyPath:@"rate"];
-    [_playerItem removeObserver:self forKeyPath:@"status"];
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object: _playerItem];
+    if ([self greater8SysVer]) {
+        AVPlayerViewController *AVVC = (AVPlayerViewController*)_playerViewController;
+        [AVVC.player removeObserver:self forKeyPath:@"rate"];
+        [_playerItem removeObserver:self forKeyPath:@"status"];
+        
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object: _playerItem];
+    }
+    else {
+        MPMoviePlayerViewController *MPVC = (MPMoviePlayerViewController*)_playerViewController;
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerPlaybackStateDidChangeNotification object:MPVC.moviePlayer];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerPlaybackDidFinishNotification object:MPVC.moviePlayer];
+    }
+}
+
+- (BOOL)greater8SysVer
+{
+    //return NO;
+    NSString *reqSysVer = @"8.0";
+    NSString *currSysVer = [[UIDevice currentDevice] systemVersion];
+    return [currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -81,7 +131,7 @@
         } else if (rate == 1.0) {
             if (_playbackStateChanged)
                 _playbackStateChanged(WXPlaybackStatePlaying);
-        } else if (rate == -1.0) {//!OCLint
+        } else if (rate == -1.0) {
             // Reverse playback
         }
     } else if ([keyPath isEqualToString:@"status"]) {
@@ -112,27 +162,34 @@
         return;
     }
     NSURL *videoNewURL = [NSURL URLWithString:newURL];
-    AVPlayerViewController *AVVC = (AVPlayerViewController*)_playerViewController;
-    if (AVVC.player && _playerItem) {
-        [_playerItem removeObserver:self forKeyPath:@"status"];
-        [AVVC.player removeObserver:self forKeyPath:@"rate"];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object: _playerItem];
+    if ([self greater8SysVer]) {
+        
+        AVPlayerViewController *AVVC = (AVPlayerViewController*)_playerViewController;
+        if (AVVC.player && _playerItem) {
+            [_playerItem removeObserver:self forKeyPath:@"status"];
+            [AVVC.player removeObserver:self forKeyPath:@"rate"];
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object: _playerItem];
+        }
+        _playerItem = [[AVPlayerItem alloc] initWithURL:videoNewURL];
+        AVPlayer *player = [AVPlayer playerWithPlayerItem: _playerItem];
+        AVVC.player = player;
+        
+        [player addObserver:self
+                 forKeyPath:@"rate"
+                    options:NSKeyValueObservingOptionNew
+                    context:NULL];
+        
+        [_playerItem addObserver:self
+                     forKeyPath:@"status"
+                        options:NSKeyValueObservingOptionNew
+                        context:NULL];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playFinish) name:AVPlayerItemDidPlayToEndTimeNotification object: _playerItem];
     }
-    _playerItem = [[AVPlayerItem alloc] initWithURL:videoNewURL];
-    AVPlayer *player = [AVPlayer playerWithPlayerItem: _playerItem];
-    AVVC.player = player;
-    
-    [player addObserver:self
-             forKeyPath:@"rate"
-                options:NSKeyValueObservingOptionNew
-                context:NULL];
-    
-    [_playerItem addObserver:self
-                  forKeyPath:@"status"
-                     options:NSKeyValueObservingOptionNew
-                     context:NULL];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playFinish) name:AVPlayerItemDidPlayToEndTimeNotification object: _playerItem];
+    else {
+        MPMoviePlayerViewController *MPVC = (MPMoviePlayerViewController*)_playerViewController;
+        [MPVC moviePlayer].contentURL = videoNewURL;
+    }
 }
 
 - (void)setPosterURL:(NSURL *)posterURL
@@ -159,30 +216,52 @@
 
 - (void)setControlShow:(BOOL)showControl
 {
-    AVPlayerViewController *AVVC = (AVPlayerViewController*)_playerViewController;
-    AVVC.showsPlaybackControls = showControl;
+    if ([self greater8SysVer]) {
+        AVPlayerViewController *AVVC = (AVPlayerViewController*)_playerViewController;
+        AVVC.showsPlaybackControls = showControl;
+    }
+    else
+    {
+        MPMoviePlayerViewController *MPVC = (MPMoviePlayerViewController*)_playerViewController;
+        MPVC.moviePlayer.controlStyle = showControl ? MPMovieControlStyleEmbedded : MPMovieControlStyleNone;
+    }
 }
 
 - (void)playFinish
 {
     if (_playbackStateChanged)
         _playbackStateChanged(WXPlaybackStatePlayFinish);
-    
-    AVPlayerViewController *AVVC = (AVPlayerViewController*)_playerViewController;
-    [[AVVC player] seekToTime:CMTimeMultiply([AVVC player].currentTime, 0)];
+    if ([self greater8SysVer]) {
+        AVPlayerViewController *AVVC = (AVPlayerViewController*)_playerViewController;
+        [[AVVC player] seekToTime:CMTimeMultiply([AVVC player].currentTime, 0)];
+    } else {
+        MPMoviePlayerViewController *MPVC = (MPMoviePlayerViewController*)_playerViewController;
+        [[MPVC moviePlayer] stop];
+    }
 }
 
 - (void)play
 {
     _posterImageView.hidden = YES;
-    AVPlayerViewController *AVVC = (AVPlayerViewController*)_playerViewController;
-    [[AVVC player] play];
+    if ([self greater8SysVer]) {
+        AVPlayerViewController *AVVC = (AVPlayerViewController*)_playerViewController;
+
+        [[AVVC player] play];
+    } else {
+        MPMoviePlayerViewController *MPVC = (MPMoviePlayerViewController*)_playerViewController;
+        [[MPVC moviePlayer] play];
+    }
 }
 
 - (void)pause
 {
-    AVPlayerViewController *AVVC = (AVPlayerViewController*)_playerViewController;
-    [[AVVC player] pause];
+    if ([self greater8SysVer]) {
+        AVPlayerViewController *AVVC = (AVPlayerViewController*)_playerViewController;
+        [[AVVC player] pause];
+    } else {
+        MPMoviePlayerViewController *MPVC = (MPMoviePlayerViewController*)_playerViewController;
+        [[MPVC moviePlayer] pause];
+    }
 }
 
 - (void)posterTapHandler {
@@ -295,7 +374,7 @@
                 break;
                 
             default:
-                NSCAssert(NO, @"");//!OCLint
+                NSCAssert(NO, @"");
                 break;
         }
         [weakSelf fireEvent:eventType params:nil];

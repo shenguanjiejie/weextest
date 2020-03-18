@@ -18,46 +18,16 @@
  */
 
 #import <UIKit/UIKit.h>
-#import <WeexSDK/WXComponent.h>
-#import <WeexSDK/WXJSExceptionInfo.h>
-#import <WeexSDK/WXResourceResponse.h>
-#import <WeexSDK/WXResourceRequest.h>
-#import <WeexSDK/WXBridgeProtocol.h>
-#import <WeexSDK/WXApmForInstance.h>
-#import <WeexSDK/WXComponentManager.h>
-
-NS_ASSUME_NONNULL_BEGIN
+#import "WXComponent.h"
+#import "WXJSExceptionInfo.h"
+#import "WXResourceResponse.h"
+#import "WXResourceRequest.h"
+#import "WXBridgeProtocol.h"
+#import "WXApmForInstance.h"
 
 extern NSString *const bundleUrlOptionKey;
 
 @interface WXSDKInstance : NSObject
-
-/**
- * Init instance and render it using iOS native views.
- * It is the same as initWithRenderType:@"platform"
- **/
-- (instancetype)init;
-
-/**
- * Init instance with custom render type.
- **/
-- (instancetype)initWithRenderType:(NSString*)renderType;
-
-/**
- * The render type. Default is "platform"
- **/
-@property (nonatomic, strong, readonly) NSString* renderType;
-
-/**
- * Returns YES when self.renderType != "platform"
- **/
-@property (nonatomic, assign, readonly) BOOL isCustomRenderType;
-
-/*
- * For weex containers in view controller(main containers), we may need to release render buffer
- * of custom render type page to save memory.
- */
-@property (nonatomic, assign) BOOL isMainContainerStack;
 
 /**
  * The viewControler which the weex bundle is rendered in.
@@ -122,11 +92,6 @@ extern NSString *const bundleUrlOptionKey;
 @property (nonatomic, assign, readonly) BOOL isRendered;
 
 /**
- * Get component manager of this instance. You can manipulate components then.
- **/
-@property (nonatomic, readonly, strong) WXComponentManager *componentManager;
-
-/**
  * The state of current instance.
  **/
 typedef NS_ENUM(NSInteger, WXState) {//state.code
@@ -152,11 +117,6 @@ typedef NS_ENUM(NSInteger, WXErrorCode) {//error.code
     DeviceModelErrorCode,
     FrameworkVersionErrorCode,
 };
-
-typedef enum : NSUInteger {
-    WXScrollerComponentCreatedCallback,
-    WXTabbarComponentCreatedCallback
-} WXSDKInstanceCallbackType;
 
 
 @property (nonatomic, assign) WXState state;
@@ -233,15 +193,6 @@ typedef enum : NSUInteger {
 @property (nonatomic, copy) void (^onScroll)(CGPoint contentOffset);
 
 /**
- *  The callback of the instance
- *
- *  When the callbackType is WXScrollerComponentCreatedCallback, the result type is WXScrollerComponent.
- *
- *  @return A block that takes instance, callbackType and a result.
- **/
-@property (nonatomic, copy) void (^instanceCallback)(WXSDKInstance* instance, WXSDKInstanceCallbackType callbackType, id result);
-
-/**
  * the callback to be run repeatedly while the instance is rendering.
  *
  * @return A block that takes a CGRect argument, which is the rect rendered
@@ -252,13 +203,13 @@ typedef enum : NSUInteger {
  * The callback triggered when the bundleJS request finished in the renderWithURL.
  * @return A block that takes response which the server response,request which send to server,data which the server returned and an error
  */
-@property (nonatomic, copy) void(^onJSDownloadedFinish)(WXResourceResponse *response,WXResourceRequest *request,NSData* _Nullable data, NSError* _Nullable error);
+@property (nonatomic, copy) void(^onJSDownloadedFinish)(WXResourceResponse *response,WXResourceRequest *request,NSData *data, NSError* error);
 
 /**
  * The callback triggered when the bundleJS request finished in the renderWithURL. If the callback returns YES, the render process will terminate.
  * @return A block that takes response which the server response,request which send to server,data which the server returned and an error
  */
-@property (nonatomic, copy) BOOL (^onRenderTerminateWhenJSDownloadedFinish)(WXResourceResponse *response,WXResourceRequest *request,NSData* _Nullable data, NSError* _Nullable error);
+@property (nonatomic, copy) BOOL (^onRenderTerminateWhenJSDownloadedFinish)(WXResourceResponse *response,WXResourceRequest *request,NSData *data, NSError* error);
 
 @property(nonatomic,strong) NSDictionary* continerInfo;
 
@@ -297,7 +248,7 @@ typedef enum : NSUInteger {
  *
  * @param data The data the bundle needs when rendered.  Defalut is nil.
  **/
-- (void)renderWithURL:(NSURL *)url options:(NSDictionary * _Nullable)options data:(id _Nullable)data;
+- (void)renderWithURL:(NSURL *)url options:(NSDictionary *)options data:(id)data;
 
 ///**
 // * Renders weex view with resource request.
@@ -317,7 +268,7 @@ typedef enum : NSUInteger {
  *
  * @param data The data the bundle needs when rendered. Defalut is nil.
  **/
-- (void)renderView:(id)source options:(NSDictionary * _Nullable)options data:(id _Nullable)data;
+- (void)renderView:(id)source options:(NSDictionary *)options data:(id)data;
 
 /**
  * Reload the js bundle from the current URL and rerender.
@@ -381,12 +332,12 @@ typedef enum : NSUInteger {
  * @param eventName the event name
  * @param params event params
  */
-- (void)fireModuleEvent:(Class)module eventName:(NSString *)eventName params:(NSDictionary* _Nullable)params;
+- (void)fireModuleEvent:(Class)module eventName:(NSString *)eventName params:(NSDictionary*)params;
 
 /**
  * fire global event
  */
-- (void)fireGlobalEvent:(NSString *)eventName params:(NSDictionary * _Nullable)params;
+- (void)fireGlobalEvent:(NSString *)eventName params:(NSDictionary *)params;
 
 /**
  * complete url based with bundle url
@@ -396,7 +347,7 @@ typedef enum : NSUInteger {
 /**
  * jsbundle str ,may be nil (weak)
  */
-- (NSString* _Nullable) bundleTemplate;
+- (NSString*) bundleTemplate;
 
 /**
  * application performance statistics
@@ -404,18 +355,10 @@ typedef enum : NSUInteger {
 @property (nonatomic, strong) NSString *bizType;
 @property (nonatomic, strong) NSString *pageName;
 @property (nonatomic, weak) id pageObject;
-
 //Deprecated, use @WXApmForInstance
 @property (nonatomic, strong) NSMutableDictionary *performanceDict;
-@property (nonatomic, strong) WXApmForInstance* apmInstance;
 
-@property (nonatomic, assign) BOOL appearState;
-
-/*
- * For custom render page to release/restore OpenGL resources, etc.
- */
-- (void)willAppear;
-- (void)didDisappear;
+@property (nonatomic ,strong) WXApmForInstance* apmInstance;
 
 /**
  * Raw css styles are dropped after applied to layout nodes in WeexCore.
@@ -441,12 +384,6 @@ typedef enum : NSUInteger {
  */
 - (void)setViewportWidth:(CGFloat)width;
 
-/**
- * @abstract Get information about the last rendered page.
- Useful fot debugging and fixing online bugs.
- */
-+ (NSDictionary*)lastPageInfo;
-
 /** 
  * Deprecated 
  */
@@ -463,5 +400,3 @@ typedef enum : NSUInteger {
 - (void)creatFinish DEPRECATED_MSG_ATTRIBUTE();
 
 @end
-
-NS_ASSUME_NONNULL_END

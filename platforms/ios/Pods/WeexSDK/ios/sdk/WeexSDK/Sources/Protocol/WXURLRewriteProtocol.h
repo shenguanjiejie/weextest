@@ -18,9 +18,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WeexSDK/WXResourceRequest.h>
-
-NS_ASSUME_NONNULL_BEGIN
+#import "WXResourceRequest.h"
 
 @class WXSDKInstance;
 
@@ -49,5 +47,3 @@ do {\
 - (NSURL *)rewriteURL:(NSString *)url withResourceType:(WXResourceType)resourceType withInstance:(WXSDKInstance *)instance;
 
 @end
-
-NS_ASSUME_NONNULL_END

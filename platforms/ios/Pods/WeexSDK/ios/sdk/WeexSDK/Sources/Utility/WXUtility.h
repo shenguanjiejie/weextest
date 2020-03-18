@@ -19,11 +19,10 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-
-#import <WeexSDK/WXDefine.h>
-#import <WeexSDK/WXType.h>
-#import <WeexSDK/WXLog.h>
-#import <WeexSDK/WXSDKInstance.h>
+#import "WXDefine.h"
+#import "WXType.h"
+#import "WXLog.h"
+#import "WXSDKInstance.h"
 
 // The default screen width which helps us to calculate the real size or scale in different devices.
 static const CGFloat WXDefaultScreenWidth = 750.0;
@@ -159,14 +158,6 @@ _Nonnull SEL WXSwizzledSelectorForSelector(_Nonnull SEL selector);
  *
  */
 + (id _Nullable)objectFromJSON:(NSString * _Nonnull)json;
-
-/**
- Convert all sub-structure objects of source to immutable container.
-
- @param source Source object.
- @return Converted object using immutable container.
- */
-+ (id _Nullable)convertContainerToImmutable:(id _Nullable)source;
 
 #define WXDecodeJson(json)  [WXUtility objectFromJSON:json]
 

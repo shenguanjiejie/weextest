@@ -32,29 +32,41 @@ Please ***INSTALL [Git for Windows](https://git-scm.com/download/win)*** and run
 * [Documents](http://weex.apache.org/references)
 
 ### Android
-**You should install [android environment](./HOW-TO-BUILD.md#android) before building.**
 
-You can either build Weex from IDE (*Android Studio*) or command line.
+* Prerequisites
+  * Install [Node.js](http://nodejs.org/) 8.0+
+  * Under project root
+    * `npm install`, install project
+    * `./start`
+    * Install [Android Environment](http://developer.android.com/training/basics/firstapp/index.html)
+    * Install [NDK](https://developer.android.com/ndk/) r18
+    * Install [Cmake](https://cmake.org/download/) 3.9.0+
+* Run playground, In Android Studio
+    * Open `android/playground`
+    * In `app/java/com.alibaba.weex/IndexActivity`, modify `CURRENT_IP` to your local IP
+    * Click <img src="http://gtms04.alicdn.com/tps/i4/TB1wCcqMpXXXXakXpXX3G7tGXXX-34-44.png" height="16" > (`Run` button)
+* [Add an example](./examples/README.md#add-an-example)
 
-#### Build From Android Studio
-1. Open `android` directory in Android Studio.
-2. Run `git submodule update --init --remote` in `android` directory if this is the first time you try to run Weex.
+#### Runtime
 
-#### Build From Command Line
-Please read [How To Build](./HOW-TO-BUILD.md) for detail.
+On Android Platform , Weex code is executed in [weex_v8core](https://github.com/alibaba/weex_v8core) which is based on Google V8 JavaScript engine.
 
 ### iOS
-**You should install [iOS environment](./HOW-TO-BUILD.md#ios) before building.**
-
-You can either build Weex from IDE (*XCode*) or command line.
-
-#### Build From XCode
-* Run playground
-  * `cd ios/playground`
-  * `pod install`
-  * Open `WeexDemo.xcworkspace` in Xcode
-  * Click <img src="http://img1.tbcdn.cn/L1/461/1/5470b677a2f2eaaecf412cc55eeae062dbc275f9" height="16" > (`Run` button) or use default shortcut `cmd + r` in Xcode
-  * If you want to run the demo on your device, don't need to modify `CURRENT_IP` manually. ~~In `DemoDefine.h`(you can search this file by Xcode default shortcut `cmd + shift + o`), modify `CURRENT_IP` to your local IP~~
+* run playground
+  * Prerequisites
+    * Install [Node.js](http://nodejs.org/) 8.0+
+      * Under project root
+          * `npm install`, install project
+          * `./start`
+      * Install [iOS Environment](https://developer.apple.com/library/ios/documentation/IDEs/Conceptual/AppStoreDistributionTutorial/Setup/Setup.html)
+      * Install [CocoaPods](https://guides.cocoapods.org/using/getting-started.html)
+  * Run playground
+      * `cd ios/playground`
+      * `pod install`
+      * Open `WeexDemo.xcworkspace` in Xcode
+      * Click <img src="http://img1.tbcdn.cn/L1/461/1/5470b677a2f2eaaecf412cc55eeae062dbc275f9" height="16" > (`Run` button) or use default shortcut `cmd + r` in Xcode
+      * If you want to run the demo on your device, don't need to modify `CURRENT_IP` manually. ~~In `DemoDefine.h`(you can search this file by Xcode default shortcut `cmd + shift + o`), modify `CURRENT_IP` to your local IP~~
+  * [Add an example](./examples/README.md#add-an-example)
 * integrate to your application
 
   - **[CocoaPods](https://cocoapods.org)**
@@ -73,9 +85,6 @@ You can either build Weex from IDE (*XCode*) or command line.
    ```
    Run `carthage update`, and you should now have the latest version of   `WeexSDK` in your `Carthage` folder.
 
-#### Build From Command Line
-Please read [How To Build](./HOW-TO-BUILD.md) for detail.
-
 ### Mobile Web
 
 see [weex-vue-render](https://github.com/weexteam/weex-vue-render).
@@ -91,9 +100,11 @@ Weex team have developed a [DevTool](https://github.com/weexteam/weex-devtool) t
 See more stuff on [this wiki page](https://github.com/alibaba/weex/wiki/Weex-Community)
 
 ## Weex Community
-* [Mailing List](https://weex.apache.org/guide/contribute/how-to-contribute.html#mailing-list) Weex Mailing List, where most discussion happens.
+* [Mailing List](https://weex-project.io/contributing.html#join-in-discussions) Weex Mailing List, where most discussion happens.
 * [StackOverflow](http://stackoverflow.com/questions/tagged/weex): Ask questions about Weex.
 * [SegmentFault (cn)](https://segmentfault.com/t/weex): 中文交流与讨论
+* [FAQ](https://weex.apache.org/faq.html)
+* [Articles (cn)](https://github.com/weexteam/article/issues): Weex 相关文章集合
 * [Telegram Russian Community Group](https://telegram.me/weex_ru)
 
 ### Contributing

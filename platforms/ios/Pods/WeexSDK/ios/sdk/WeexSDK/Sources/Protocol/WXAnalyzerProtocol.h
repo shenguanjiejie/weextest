@@ -18,9 +18,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WeexSDK/WXAppMonitorProtocol.h>
-
-NS_ASSUME_NONNULL_BEGIN
+#import "WXAppMonitorProtocol.h"
 
 #define GROUP_ANALYZER          @"WXAnalyzer"
 #define MODULE_PERFORMANCE      @"WXPerformance"
@@ -44,5 +42,3 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)transfer:(NSDictionary *) value;
 
 @end
-
-NS_ASSUME_NONNULL_END

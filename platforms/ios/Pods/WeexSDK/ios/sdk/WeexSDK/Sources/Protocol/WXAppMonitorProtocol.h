@@ -19,8 +19,6 @@
 
 #import "WXModuleProtocol.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
 /**  dimenValue  */
 #define BIZTYPE             @"bizType"
 #define PAGENAME            @"pageName"
@@ -76,12 +74,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)commitAppMonitorArgs:(NSDictionary *)args;
 
-- (void)commitAppMonitorAlarm:(NSString *)pageName monitorPoint:(NSString *)monitorPoint success:(BOOL)success errorCode:(NSString *)errorCode errorMsg:(NSString *)errorMsg arg:(NSString * _Nullable)arg;
+- (void)commitAppMonitorAlarm:(NSString *)pageName monitorPoint:(NSString *)monitorPoint success:(BOOL)success errorCode:(NSString *)errorCode errorMsg:(NSString *)errorMsg arg:(NSString *)arg;
 
 @optional
 
-- (void)commitMonitorWithPage:(NSString *)pageName monitorPoint:(NSString *)monitorPoint args:(NSDictionary * _Nullable)args;
+- (void)commitMonitorWithPage:(NSString *)pageName monitorPoint:(NSString *)monitorPoint args:(NSDictionary *)args;
 
 @end
-
-NS_ASSUME_NONNULL_END

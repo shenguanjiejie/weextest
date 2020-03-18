@@ -18,9 +18,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WeexSDK/WXAnalyzerProtocol.h>
-
-NS_ASSUME_NONNULL_BEGIN
+#import "WXAnalyzerProtocol.h"
 
 @interface WXAnalyzerCenter : NSObject
 
@@ -37,5 +35,3 @@ NS_ASSUME_NONNULL_BEGIN
 +(BOOL) isInteractionLogOpen;
 
 @end
-
-NS_ASSUME_NONNULL_END

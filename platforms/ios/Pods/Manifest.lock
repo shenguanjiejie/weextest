@@ -1,8 +1,8 @@
 PODS:
   - GCanvas (1.1.1)
-  - SDWebImage (3.7.5):
-    - SDWebImage/Core (= 3.7.5)
-  - SDWebImage/Core (3.7.5)
+  - SDWebImage (5.6.1):
+    - SDWebImage/Core (= 5.6.1)
+  - SDWebImage/Core (5.6.1)
   - SocketRocket (0.4.2)
   - WeexGcanvas (1.1.0):
     - GCanvas
@@ -11,11 +11,9 @@ PODS:
     - WeexSDK
   - WeexPluginLoader (0.0.1.9.1):
     - WeexSDK
-  - WeexSDK (0.28.0)
+  - WeexSDK (0.26.0)
 
 DEPENDENCIES:
-  - GCanvas
-  - SDWebImage (= 3.7.5)
   - SocketRocket (= 0.4.2)
   - WeexGcanvas
   - WeexPluginLoader
@@ -32,12 +30,12 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   GCanvas: 48279b84f74a24c8c41fedc8ca19885ef3f4a8d9
-  SDWebImage: 69c6303e3348fba97e03f65d65d4fbc26740f461
+  SDWebImage: 7edb9c3ea661e77a66661f7f044de8c1b55d1120
   SocketRocket: ffe08119b00ef982f6c37052a4705a057c8494ad
   WeexGcanvas: b10a20f718ae66fee72dc1d896e5cc0e64a397e4
   WeexPluginLoader: 85c1304f8ba29864e58531614a0acfeceef1b85c
-  WeexSDK: 78861d2f8b78f67e30580c15a54f5b420456db39
+  WeexSDK: 55b67d1c411eb28ec1e356f763a335d0ddcc5324
 
-PODFILE CHECKSUM: 7cf2ed216898e4d147244eca33e107aa88081b60
+PODFILE CHECKSUM: d7513f7a3511c448aa3bdefad83ae941bc8bb7d4
 
 COCOAPODS: 1.9.1

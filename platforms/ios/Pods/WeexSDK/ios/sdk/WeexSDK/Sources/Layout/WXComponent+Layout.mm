@@ -730,9 +730,9 @@ static WeexCore::WXCoreSize flexCssNodeMeasure(WeexCore::WXCoreLayoutNode *node,
         } else if ([value isEqualToString:@"center"]) {
             return WeexCore::kAlignItemsCenter;
             //return WXCoreFlexLayout::WXCore_AlignItems_Center;
-        } else if ([value isEqualToString:@"auto"]) {//!OCLint
+        } else if ([value isEqualToString:@"auto"]) {
 //            return YGAlignAuto;
-        } else if ([value isEqualToString:@"baseline"]) {//!OCLint
+        } else if ([value isEqualToString:@"baseline"]) {
 //            return YGAlignBaseline;
         }
     }
@@ -753,7 +753,7 @@ static WeexCore::WXCoreSize flexCssNodeMeasure(WeexCore::WXCoreLayoutNode *node,
             return WeexCore::kAlignSelfCenter;
         } else if ([value isEqualToString:@"auto"]) {
             return WeexCore::kAlignSelfAuto;
-        } else if ([value isEqualToString:@"baseline"]) {//!OCLint
+        } else if ([value isEqualToString:@"baseline"]) {
             //            return YGAlignBaseline;
         }
     }

@@ -18,14 +18,13 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WeexSDK/WXSDKInstance.h>
+#import "WXSDKInstance.h"
 
-NS_ASSUME_NONNULL_BEGIN
 
 @interface WXValidateResult : NSObject
 
-@property(nonatomic,assign) BOOL            isSuccess;
-@property(nonatomic,strong) NSError* _Nullable    error;
+@property(nonatomic,assign)BOOL            isSuccess;
+@property(nonatomic,strong)NSError*        error;
 
 @end
 
@@ -44,10 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(BOOL)needValidate:(NSURL*) bundleUrl;
 
--(WXModuleValidateResult *)validateWithWXSDKInstance:(WXSDKInstance *)wxsdkInstance module:(NSString*) moduel method:(NSString *)method args:(nullable NSArray *)args options:(nullable NSDictionary *)options;
+-(WXModuleValidateResult *)validateWithWXSDKInstance:(WXSDKInstance *)wxsdkInstance module:(NSString*) moduel method:(NSString *)method args:(NSArray *)args options:(NSDictionary *)options;
 
--(WXComponentValidateResult *)validateWithWXSDKInstance:(WXSDKInstance *)wxsdkInstance component:(NSString *)componentName supercomponent:(nullable WXComponent *)supercomponent;
+-(WXComponentValidateResult *)validateWithWXSDKInstance:(WXSDKInstance *)wxsdkInstance component:(NSString *)componentName supercomponent:(WXComponent *)supercomponent;
 
 @end
-
-NS_ASSUME_NONNULL_END

@@ -26,15 +26,17 @@
 #include <utility>
 #include <vector>
 
-#include "render_page_base.h"
 #include "core/css/constants_value.h"
 
 namespace WeexCore {
 
 class RenderAction;
+
 class RenderObject;
 
-class RenderPage: public RenderPageBase {
+class RenderPerformance;
+
+class RenderPage {
  private:
   void TraverseTree(RenderObject *render, long index);
 
@@ -43,11 +45,8 @@ class RenderPage: public RenderPageBase {
   void SendAddElementAction(RenderObject *child, RenderObject *parent,
                             int index, bool is_recursion,
                             bool will_layout = true);
-  void SendAddChildToRichtextAction(RenderObject *child, RenderObject *parent, RenderObject *richtext);
 
   void SendRemoveElementAction(const std::string &ref);
-
-  void SendRemoveChildFromRichtextAction(const std::string &ref, RenderObject *parent, RenderObject *richtext);
 
   void SendMoveElementAction(const std::string &ref,
                              const std::string &parent_ref, int index);
@@ -61,16 +60,20 @@ class RenderPage: public RenderPageBase {
       std::vector<std::pair<std::string, std::string>> *padding,
       std::vector<std::pair<std::string, std::string>> *border);
 
-  void SendUpdateRichtextChildStyleAction(RenderObject *render, std::vector<std::pair<std::string, std::string>> *style, RenderObject *parent, RenderObject *richtext);
-
   void SendUpdateAttrAction(
       RenderObject *render,
       std::vector<std::pair<std::string, std::string>> *attrs);
 
- void SendUpdateRichtextChildAttrAction(
-                              RenderObject *render,
-                              std::vector<std::pair<std::string, std::string>> *attrs, RenderObject *parent, RenderObject *richtext);
+  void SendCallNativeModuleAction(const std::string &module,
+                                  const std::string &method, const std::string &args, int argc = 0);
+    
+  void SendCreateFinishAction();
+
+  void SendRenderSuccessAction();
+
   void SendAppendTreeCreateFinish(const std::string &ref);
+
+  void PostRenderAction(RenderAction *action);
   
   void LayoutInner();
 
@@ -86,34 +89,48 @@ public:
   bool AddRenderObject(const std::string &parent_ref, int insert_posiotn,
                        RenderObject *child);
 
-  virtual bool RemoveRenderObject(const std::string &ref) override;
+  bool RemoveRenderObject(const std::string &ref);
 
-  virtual bool MoveRenderObject(const std::string &ref, const std::string &parent_ref, int index) override;
+  bool MoveRenderObject(const std::string &ref, const std::string &parent_ref,
+                        int index);
 
-  virtual bool UpdateStyle(const std::string &ref,
-                   std::vector<std::pair<std::string, std::string>> *styles) override;
+  bool UpdateStyle(const std::string &ref,
+                   std::vector<std::pair<std::string, std::string>> *styles);
 
-  virtual bool UpdateAttr(const std::string &ref,
-                  std::vector<std::pair<std::string, std::string>> *attrs) override;
+  bool UpdateAttr(const std::string &ref,
+                  std::vector<std::pair<std::string, std::string>> *attrs);
 
-  virtual void SetDefaultHeightAndWidthIntoRootRender(
+  void SetDefaultHeightAndWidthIntoRootRender(
       const float default_width, const float default_height,
-      const bool is_width_wrap_content, const bool is_height_wrap_content) override;
+      const bool is_width_wrap_content, const bool is_height_wrap_content);
 
-  virtual bool AddEvent(const std::string &ref, const std::string &event) override;
+  bool AddEvent(const std::string &ref, const std::string &event);
 
-  virtual bool RemoveEvent(const std::string &ref, const std::string &event) override;
+  bool RemoveEvent(const std::string &ref, const std::string &event);
 
-  virtual bool CreateFinish() override;
+  bool CreateFinish();
 
   void Batch();
+
+  void CssLayoutTime(const int64_t &time);
+
+  void ParseJsonTime(const int64_t &time);
+
+  void CallBridgeTime(const int64_t &time);
+
+  std::vector<int64_t> PrintFirstScreenLog();
+
+  std::vector<int64_t> PrintRenderSuccessLog();
 
   void LayoutImmediately();
 
   void SendUpdateAttrAction(RenderObject *render,
                             std::map<std::string, std::string> *attrs);
 
-  virtual RenderObject *GetRenderObject(const std::string &ref) override;
+  RenderObject *GetRenderObject(const std::string &ref);
+    
+  void CallNativeModule(const std::string &module,
+                          const std::string &method, const std::string &args, int argc = 0);
 
   void SetRootRenderObject(RenderObject *root);
     
@@ -133,12 +150,13 @@ public:
 
   void OnRenderProcessGone();
 
-  virtual void OnRenderPageClose() override;
+  void OnRenderPageClose();
   
   // Re-apply raw css styles to page and trigger layout
-  virtual bool ReapplyStyles() override;
+  bool ReapplyStyles();
 
  public:
+  inline std::string page_id() { return this->page_id_; }
 
   inline bool is_dirty() { return this->is_dirty_.load(); }
 
@@ -151,14 +169,6 @@ public:
   inline bool is_render_container_width_wrap_content() {
     return this->is_render_container_width_wrap_content_.load();
   }
-
-
-  virtual float GetViewportWidth() override { return viewport_width_; }
-  virtual void SetViewportWidth(float value) override { viewport_width_ = value; };
-  virtual bool GetRoundOffDeviation() override { return round_off_deviation_; }
-  virtual void SetRoundOffDeviation(bool value) override { round_off_deviation_ = value; }
-  virtual float GetDeviceWidth() override { return device_width_; }
-  virtual void SetDeviceWidth(float value) override { device_width_ = value; }
 
   inline float viewport_width() const { return this->viewport_width_; }
 
@@ -195,8 +205,10 @@ public:
 
  private:
   RenderObject *render_root_ = nullptr;
+  std::string page_id_;
   std::pair<float, float> render_page_size_;
   std::map<std::string, RenderObject *> render_object_registers_;
+  RenderPerformance *render_performance_;
   std::atomic_bool is_dirty_{true};
   std::atomic_bool is_render_container_width_wrap_content_{false};
   std::atomic_bool is_render_container_height_wrap_content_{false};

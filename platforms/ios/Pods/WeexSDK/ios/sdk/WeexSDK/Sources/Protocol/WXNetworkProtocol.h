@@ -18,9 +18,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WeexSDK/WXModuleProtocol.h>
-
-NS_ASSUME_NONNULL_BEGIN
+#import "WXModuleProtocol.h"
 
 __attribute__ ((deprecated("Use WXResourceRequestHandler instead")))
 @protocol WXNetworkProtocol <NSObject>
@@ -38,11 +36,9 @@ __attribute__ ((deprecated("Use WXResourceRequestHandler instead")))
  *
  * @param completionCallback This block is called when the last message related to a specific task is sent.
  */
-- (id)sendRequest:(NSURLRequest *)request withSendingData:(nullable void (^)(int64_t bytesSent, int64_t totalBytes))sendDataCallback
-                                             withResponse:(nullable void (^)(NSURLResponse *response))responseCallback
-                                          withReceiveData:(nullable void (^)(NSData *data))receiveDataCallback
-                                          withCompeletion:(nullable void (^)(NSData *totalData, NSError *error))completionCallback;
+- (id)sendRequest:(NSURLRequest *)request withSendingData:(void (^)(int64_t bytesSent, int64_t totalBytes))sendDataCallback
+                                             withResponse:(void (^)(NSURLResponse *response))responseCallback
+                                          withReceiveData:(void (^)(NSData *data))receiveDataCallback
+                                          withCompeletion:(void (^)(NSData *totalData, NSError *error))completionCallback;
 
 @end
-
-NS_ASSUME_NONNULL_END

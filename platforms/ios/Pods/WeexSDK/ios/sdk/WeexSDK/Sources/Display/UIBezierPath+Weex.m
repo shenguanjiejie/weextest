@@ -33,10 +33,10 @@ static const float kCircleControlPoint = 0.447715;
                                  bottomRight:(CGFloat)bottomRightRadius
 {
     UIBezierPath *path = [UIBezierPath bezierPath];
-    if(isnan(topLeftRadius) || isnan(topRightRadius) || isnan(bottomLeftRadius) || isnan(bottomRightRadius)) { //!OCLint
+    if(isnan(topLeftRadius) || isnan(topRightRadius) || isnan(bottomLeftRadius) || isnan(bottomRightRadius)) {
         return path;
     }
-    if (![WXUtility isValidPoint:rect.origin] || isnan(rect.size.height) || isnan(rect.size.width)) { //!OCLint
+    if (![WXUtility isValidPoint:rect.origin] || isnan(rect.size.height) || isnan(rect.size.width)) {
         return path;
     }
     CGPoint topLeftPoint = CGPointMake(rect.origin.x + topLeftRadius, rect.origin.y);

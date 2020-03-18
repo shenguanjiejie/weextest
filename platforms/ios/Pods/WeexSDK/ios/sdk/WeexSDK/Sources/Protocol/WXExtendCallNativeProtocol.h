@@ -20,8 +20,6 @@
 
 #import <Foundation/Foundation.h>
 
-NS_ASSUME_NONNULL_BEGIN
-
 @protocol WXExtendCallNativeProtocol <NSObject>
 
 @required
@@ -47,5 +45,3 @@ NS_ASSUME_NONNULL_BEGIN
 + (id)excuteCallNative:(NSDictionary *)parameters;
 
 @end
-
-NS_ASSUME_NONNULL_END

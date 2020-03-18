@@ -17,16 +17,14 @@
  * under the License.
  */
 
-#import <WeexSDK/WXScrollerProtocol.h>
-#import <WeexSDK/WXComponent.h>
-
-NS_ASSUME_NONNULL_BEGIN
+#import "WXScrollerProtocol.h"
+#import "WXComponent.h"
 
 @interface WXScrollerComponent : WXComponent <WXScrollerProtocol, UIScrollViewDelegate>
 
 @property (nonatomic, copy) void (^onScroll)(UIScrollView *scrollView);
 
-@property (nonatomic, copy) void (^scrollEventListener)(WXScrollerComponent* sender, NSString* event, NSDictionary* _Nullable params);
+@property (nonatomic, copy) void (^scrollEventListener)(WXScrollerComponent* sender, NSString* event, NSDictionary* params);
 
 @property (nonatomic, assign) NSUInteger loadmoreretry;
 
@@ -38,4 +36,3 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-NS_ASSUME_NONNULL_END

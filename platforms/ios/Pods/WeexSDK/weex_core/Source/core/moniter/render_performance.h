@@ -20,7 +20,6 @@
 #define WEEX_PROJECT_WXPERFORMANCE_H
 
 #include <vector>
-#include <map>
 
 namespace WeexCore {
 
@@ -50,16 +49,10 @@ namespace WeexCore {
 
     int64_t onRenderSuccessParseJsonTime;
 
-    int64_t cssLayoutTimeForInteraction;
-
     RenderPerformance() : callBridgeTime(0), cssLayoutTime(0), parseJsonTime(0),
                           firstScreenCallBridgeTime(0), firstScreenCssLayoutTime(0),
                           firstScreenParseJsonTime(0), onRenderSuccessCallBridgeTime(0),
-                          onRenderSuccessCssLayoutTime(0), onRenderSuccessParseJsonTime(0),
-                          cssLayoutTimeForInteraction(0) {}
-    bool onInteractionTimeUpdate();
-
-    void getPerformanceStringData(std::map<std::string,std::string> &map);
+                          onRenderSuccessCssLayoutTime(0), onRenderSuccessParseJsonTime(0) {}
 
     std::vector<int64_t> PrintPerformanceLog(PerformanceStage performanceStage);
   };

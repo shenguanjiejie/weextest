@@ -41,7 +41,7 @@
 
 - (instancetype)init
 {
-    if(self = [super init]){//!OCLint
+    if(self = [super init]){
 
     }
     return self;

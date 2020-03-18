@@ -18,13 +18,11 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WeexSDK/WXJSExceptionInfo.h>
-
-NS_ASSUME_NONNULL_BEGIN
+#import "WXJSExceptionInfo.h"
 
 @interface WXExceptionUtils : NSObject
 
-+ (void)commitCriticalExceptionRT:(NSString *)instanceId errCode:(NSString *)errCode function:(NSString *)function exception:(NSString *)exception extParams:(NSDictionary * _Nullable)extParams;
++ (void)commitCriticalExceptionRT:(NSString *)instanceId errCode:(NSString *)errCode function:(NSString *)function exception:(NSString *)exception extParams:(NSDictionary *)extParams;
 
 + (void)commitCriticalExceptionRT:(WXJSExceptionInfo*)jsExceptionInfo;
 
@@ -32,4 +30,3 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-NS_ASSUME_NONNULL_END

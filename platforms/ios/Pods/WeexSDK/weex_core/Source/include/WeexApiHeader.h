@@ -119,12 +119,6 @@ typedef void
 (*FuncUpdateComponentData)(const char* page_id, const char* cid, const char* json_data);
 
 
-typedef bool
-(*FuncLog)(int level, const char *tag,
-           const char *file,
-           unsigned long line,
-           const char *log);
-
 typedef struct FunctionsExposedByCore {
     FuncSetJSVersion funcSetJSVersion;
     FuncReportException funcReportException;
@@ -153,7 +147,6 @@ typedef struct FunctionsExposedByCore {
     FuncCallDispatchMessageSync funcCallDispatchMessageSync;
     FuncOnReceivedResult  funcOnReceivedResult;
     FuncUpdateComponentData funcUpdateComponentData;
-    FuncLog funcLog;
 } FunctionsExposedByCore;
 
 typedef void (*FuncCallSetJSVersion)(const char* version);
@@ -266,8 +259,6 @@ typedef int (*FuncUpdateGlobalConfig)(const char *config);
 
 typedef int (*FuncUpdateInitFrameworkParams)(const std::string& key, const std::string& value, const std::string& desc);
 
-typedef void (*FuncSetLogType)(const int logLevel, const bool isPerf);
-
 typedef struct FunctionsExposedByJS {
     FuncInitFramework funcInitFramework;
     FuncInitAppFramework funcInitAppFramework;
@@ -285,7 +276,6 @@ typedef struct FunctionsExposedByJS {
     FuncDestroyInstance funcDestroyInstance;
     FuncUpdateGlobalConfig funcUpdateGlobalConfig;
     FuncUpdateInitFrameworkParams funcUpdateInitFrameworkParams;
-    FuncSetLogType funcSetLogType;
 } FunctionsExposedByJS;
 
 
